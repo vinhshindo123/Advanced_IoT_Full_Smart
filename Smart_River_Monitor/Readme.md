@@ -88,7 +88,10 @@ SENTI-Flood/
 * **Case 1:** Nước dâng ➔ Hú còi ➔ Cửa mở 20% (Ngưỡng 3.5cm).
 * **Case 2:** Nước dâng cao ➔ Cửa mở 50% (Ngưỡng 2.5cm).
 * **Case 3:** Nhấn nút **LOCK** trên Web ➔ Cửa đóng lập tức (Cưỡng chế).
-<video src="assets/video_demo.mp4" width="100%" controls title="Demo SENTI-Flood"></video>
+### 🎥 Video Demo Vận Hành Hệ Thống
+[![SENTI-Flood Demo Video](https://img.shields.io/badge/YouTube-Video_Demo-red?style=for-the-badge&logo=youtube)](https://drive.google.com/file/d/1PZDTqWoFR0ZFvW6fZ1-QE2DLIUibbFjk/view?usp=sharing)
+
+*Nhấn vào nút đỏ ở trên để xem video demo vận hành thực tế.*
 ---
 
 ## 👨‍💻 7. Hướng dẫn cài đặt (Installation)
