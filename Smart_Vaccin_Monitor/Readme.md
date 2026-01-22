@@ -75,7 +75,7 @@ SENTI-Vaccine/
 
 
 ### 🎥 Video Demo Vận Hành
-[![SENTI-Vaccine Demo](https://img.shields.io/badge/Google_Drive-Video_Demo-blue?style=for-the-badge&logo=googledrive)](https://drive.google.com/file/d/1PZDTqWoFR0ZFvW6fZ1-QE2DLIUibbFjk/view?usp=sharing)
+[![SENTI-Vaccine Demo]([https://drive.google.com/file/d/1PZDTqWoFR0ZFvW6fZ1-QE2DLIUibbFjk/view?usp=sharing])](https://drive.google.com/file/d/1GYdByvm8uLrBCtg0LV07XFDcSOJFwVXM/view?usp=sharing))
 
 *Nhấn vào biểu tượng để xem video thực tế về cơ chế gửi bù dữ liệu và phản hồi điều khiển.* 🎬
 
