@@ -80,10 +80,7 @@ SENTI-Flood/
 
 | Cụm Node điều khiển | Cụm Gateway cảm biến | Giao diện Dashboard |
 | :---: | :---: | :---: |
-| ![Node](<img width="1069" height="815" alt="image" src="https://github.com/user-attachments/assets/ede2dd4d-071f-4c43-8ee0-4948de937564" />
-) | ![Gateway](<img width="1091" height="821" alt="image" src="https://github.com/user-attachments/assets/855bc08a-8834-4ddc-81d4-b109b6d3455e" />
-) | ![Dashboard](<img width="1909" height="915" alt="image" src="https://github.com/user-attachments/assets/3e6febb9-16a3-4a1a-9656-546b7e421294" />
-) |
+| ![Node](<img width="1069" height="815" alt="image" src="https://github.com/user-attachments/assets/ede2dd4d-071f-4c43-8ee0-4948de937564" />| ![Gateway](<img width="1091" height="821" alt="image" src="https://github.com/user-attachments/assets/855bc08a-8834-4ddc-81d4-b109b6d3455e" />| ![Dashboard](<img width="1909" height="915" alt="image" src="https://github.com/user-attachments/assets/3e6febb9-16a3-4a1a-9656-546b7e421294" />|
 
 ### 🎥 Video Demo vận hành
 
@@ -91,7 +88,15 @@ SENTI-Flood/
 * **Case 1:** Nước dâng ➔ Hú còi ➔ Cửa mở 20% (Ngưỡng 3.5cm).
 * **Case 2:** Nước dâng cao ➔ Cửa mở 50% (Ngưỡng 2.5cm).
 * **Case 3:** Nhấn nút **LOCK** trên Web ➔ Cửa đóng lập tức (Cưỡng chế).
-
+<div style="text-align: center;">
+    <h3>Video Minh Họa Vận Hành</h3>
+    <iframe 
+        src="https://drive.google.com/file/d/1PZDTqWoFR0ZFvW6fZ1-QE2DLIUibbFjk/preview" 
+        width="640" 
+        height="480" 
+        allow="autoplay">
+    </iframe>
+</div>
 ---
 
 ## 👨‍💻 7. Hướng dẫn cài đặt (Installation)
