@@ -75,8 +75,11 @@ SENTI-Vaccine/
 
 
 ### 🎥 Video Demo Vận Hành
-[![SENTI-Vaccine Demo]([https://drive.google.com/file/d/1PZDTqWoFR0ZFvW6fZ1-QE2DLIUibbFjk/view?usp=sharing])](https://drive.google.com/file/d/1GYdByvm8uLrBCtg0LV07XFDcSOJFwVXM/view?usp=sharing))
+[![SENTI-Vaccine Demo Video](https://img.shields.io/badge/Google_Drive-Video_Demo-blue?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1GYdByvm8uLrBCtg0LV07XFDcSOJFwVXM/view?usp=sharing)
 
+> **💡 Xem gì trong video:** > 1. Quy trình cảm biến đọc dữ liệu và xử lý lọc nhiễu.
+> 2. Gateway thực hiện gửi bù dữ liệu (Batch Data) sau khi hồi phục kết nối mạng.
+> 3. Thao tác điều khiển thiết bị trực tiếp từ giao diện Web Dashboard.
 *Nhấn vào biểu tượng để xem video thực tế về cơ chế gửi bù dữ liệu và phản hồi điều khiển.* 🎬
 
 ---
