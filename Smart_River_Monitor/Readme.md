@@ -78,9 +78,11 @@ SENTI-Flood/
 ### 🖼️ Hình ảnh thực tế hệ thống
 > *Mẹo: Bạn nên chụp ảnh mạch Gateway có kèm màn hình LCD và ảnh Node cảm biến đặt tại vị trí đo.*
 
-| Cụm Gateway điều khiển | Cụm Node cảm biến | Giao diện Dashboard |
+| Cụm Node điều khiển | Cụm Gateway cảm biến | Giao diện Dashboard |
 | :---: | :---: | :---: |
-| ![Gateway](https://via.placeholder.com/300x200?text=Gateway+Photo) | ![Node](https://via.placeholder.com/300x200?text=Node+Photo) | ![Dashboard](<img width="1909" height="915" alt="image" src="https://github.com/user-attachments/assets/3e6febb9-16a3-4a1a-9656-546b7e421294" />
+| ![Node](<img width="1069" height="815" alt="image" src="https://github.com/user-attachments/assets/ede2dd4d-071f-4c43-8ee0-4948de937564" />
+) | ![Gateway](<img width="1091" height="821" alt="image" src="https://github.com/user-attachments/assets/855bc08a-8834-4ddc-81d4-b109b6d3455e" />
+) | ![Dashboard](<img width="1909" height="915" alt="image" src="https://github.com/user-attachments/assets/3e6febb9-16a3-4a1a-9656-546b7e421294" />
 ) |
 
 ### 🎥 Video Demo vận hành
