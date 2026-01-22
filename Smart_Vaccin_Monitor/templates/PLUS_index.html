@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Giám Sát Vaccine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --danger: #d93025;
+            --warning: #f4b400;
+            --success: #1e8e3e;
+            --dark: #3c4043;
+            --bg: #f1f3f4;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header h1 { margin: 0; font-size: 24px; color: var(--primary); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        .card h3 {
+            margin-top: 0;
+            color: #5f6368;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .temp-display {
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alarm-active { background: #fce8e6; color: var(--danger); border: 1px solid #fad2cf; }
+        .alarm-safe { background: #e6f4ea; color: var(--success); border: 1px solid #ceead6; }
+
+        /* Nhóm Nút Điều Khiển */
+        .control-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            color: white;
+            font-size: 14px;
+        }
+
+        button:active { transform: scale(0.96); }
+
+        .btn-alarm-off { background: var(--danger); }
+        .btn-alarm-reset { background: var(--primary); }
+        .btn-light-on { background: var(--warning); }
+        .btn-light-off { background: var(--dark); }
+
+        /* Bảng dữ liệu */
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #eee;
+            color: #5f6368;
+        }
+
+        td { padding: 15px; border-bottom: 1px solid #f1f3f4; }
+
+        .batch-row { background-color: #f8f9fa; color: #9aa0a6; font-style: italic; }
+        .high-temp { color: var(--danger); font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>❄️ SMART VACCINE MONITOR</h1>
+        <div id="connection-status" style="color: var(--success); font-weight: 600;">● Hệ thống trực tuyến</div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Nhiệt độ hiện tại</h3>
+            <div id="main-temp" class="temp-display">--°C</div>
+            <p id="last-update" style="text-align: center; color: #80868b; margin: 0;"></p>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <h3>Bảng Điều Khiển</h3>
+            <div id="status-badge" class="status-badge alarm-safe">HỆ THỐNG READY</div>
+            
+            <div class="control-group">
+                <button class="btn-alarm-off" onclick="sendCmd('OFF')">🔇 TẮT CÒI NGAY</button>
+                <button class="btn-alarm-reset" onclick="sendCmd('RESET')">🔄 KHÔI PHỤC CÒI</button>
+                <button class="btn-light-on" onclick="sendCmd('RELAY_ON')">💡 BẬT ĐÈN</button>
+                <button class="btn-light-off" onclick="sendCmd('RELAY_OFF')">🌑 TẮT ĐÈN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Lịch sử đo lường (20 bản ghi gần nhất)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Nhiệt độ</th>
+                        <th>Trạng thái</th>
+                        <th>Nguồn</th>
+                    </tr>
+                </thead>
+                <tbody id="log-table">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function refresh() {
+        try {
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            
+            if(data.measurements && data.measurements.length > 0) {
+                const latest = data.measurements[0];
+                document.getElementById('main-temp').innerText = latest.sensor_value.toFixed(1) + "°C";
+                document.getElementById('last-update').innerText = "Cập nhật: " + new Date(latest.created_at).toLocaleTimeString();
+                
+                // Hiển thị bảng lịch sử
+                document.getElementById('log-table').innerHTML = data.measurements.map(m => {
+                    const isBatch = m.note === "BATCH_DATA";
+                    return `
+                        <tr class="${isBatch ? 'batch-row' : ''}">
+                            <td>${new Date(m.created_at).toLocaleTimeString()}</td>
+                            <td class="${m.sensor_value > 8 ? 'high-temp' : ''}">${m.sensor_value.toFixed(2)}°C</td>
+                            <td>${m.sensor_value > 8 ? '❌ Quá nhiệt' : '✔️ An toàn'}</td>
+                            <td>${isBatch ? '⏳ Gửi bù' : '⚡ Trực tiếp'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Cập nhật Badge trạng thái từ Device Table
+            const badge = document.getElementById('status-badge');
+            const status = data.device.status;
+            
+            if(status === 'ALARM_OFF') {
+                badge.innerText = "🔇 CÒI ĐANG TẮT CƯỠNG CHẾ";
+                badge.className = "status-badge alarm-active";
+            } else if(status === 'LED_ON') {
+                badge.innerText = "💡 ĐÈN ĐANG BẬT";
+                badge.className = "status-badge alarm-safe";
+            } else if(status === 'LED_OFF') {
+                badge.innerText = "🌑 ĐÈN ĐANG TẮT";
+                badge.className = "status-badge alarm-safe";
+            } else {
+                badge.innerText = "✅ HỆ THỐNG AN TOÀN";
+                badge.className = "status-badge alarm-safe";
+            }
+
+        } catch (err) {
+            console.error("Lỗi cập nhật:", err);
+            document.getElementById('connection-status').innerText = "○ Mất kết nối Server";
+            document.getElementById('connection-status').style.color = "var(--danger)";
+        }
+    }
+
+    async function sendCmd(act) {
+        // Hiệu ứng phản hồi nhanh trên nút
+        console.log("Đang gửi lệnh:", act);
+        try {
+            await fetch('/control', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: act})
+            });
+            // Tự động refresh sau 1 giây để cập nhật trạng thái mới từ DB
+            setTimeout(refresh, 1000);
+        } catch (e) {
+            alert("Không thể gửi lệnh tới Server!");
+        }
+    }
+
+    // Tự động làm mới mỗi 2 giây
+    setInterval(refresh, 2000);
+    refresh();
+</script>
+
+</body>
+</html>
