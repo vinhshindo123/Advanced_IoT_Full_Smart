@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Giám Sát Lũ 4.0 | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: #004e92; background: linear-gradient(to right, #000428, #004e92); color: white; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: #0d6efd; }
+        .btn-control { border-radius: 10px; padding: 15px; font-weight: bold; text-transform: uppercase; }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .bg-online { background-color: #2ecc71; box-shadow: 0 0 10px #2ecc71; }
+        .bg-offline { background-color: #e74c3c; box-shadow: 0 0 10px #e74c3c; }
+        #chart-container { position: relative; height: 350px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-4">
+    <div class="container">
+        <span class="navbar-brand"><i class="fas fa-broadcast-tower me-2"></i> TRUNG TÂM ĐIỀU KHIỂN ĐẬP THỦY ĐIỆN 4.0</span>
+        <span id="connection-status" class="badge bg-light text-dark">
+            <span class="status-indicator bg-online"></span> HỆ THỐNG SẴN SÀNG
+        </span>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card p-4 text-center mb-4">
+                <h6 class="text-muted text-uppercase">Mực nước hiện tại</h6>
+                <div id="water-level-display" class="stat-value">--</div>
+                <p class="text-primary font-weight-bold">centimet (cm)</p>
+                <hr>
+                <div class="d-flex justify-content-around">
+                    <div>
+                        <small class="text-muted d-block">Trạng thái</small>
+                        <span id="gate-status" class="badge bg-primary">ĐANG ĐÓNG</span>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Kết nối</small>
+                        <span id="node-online" class="badge bg-success">NODE ON</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4">
+                <h5 class="mb-3"><i class="fas fa-user-shield me-2"></i> Điều khiển cưỡng chế</h5>
+                <div class="d-grid gap-3">
+                    <button onclick="sendControl('LOCK')" class="btn btn-danger btn-control shadow-sm">
+                        <i class="fas fa-lock me-2"></i> KHÓA CỬA XẢ KHẨN CẤP
+                    </button>
+                    <button onclick="sendControl('UNLOCK')" class="btn btn-success btn-control shadow-sm">
+                        <i class="fas fa-sync-alt me-2"></i> CHẾ ĐỘ TỰ ĐỘNG (AUTO)
+                    </button>
+                </div>
+                <div class="alert alert-warning mt-3 py-2 small">
+                    <i class="fas fa-exclamation-triangle me-1"></i> <b>Lưu ý:</b> Lệnh khóa sẽ bỏ qua các điều kiện cảm biến.
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="m-0"><i class="fas fa-chart-line me-2"></i> Biểu đồ mực nước thời gian thực</h5>
+                    <span class="text-muted small" id="last-updated">Cập nhật: --:--:--</span>
+                </div>
+                <div id="chart-container">
+                    <canvas id="waterChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Khởi tạo biểu đồ Chart.js
+    const ctx = document.getElementById('waterChart').getContext('2d');
+    let waterChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Mực nước (cm)',
+                data: [],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 10, grid: { color: '#e0e0e0' } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 2. Hàm lấy dữ liệu từ API Flask
+    async function fetchData() {
+        try {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+
+            if (data.measurements && data.measurements.length > 0) {
+                // Cập nhật text mực nước (Lấy cái mới nhất)
+                const latest = data.measurements[0];
+                document.getElementById('water-level-display').innerText = latest.sensor_value.toFixed(1);
+                document.getElementById('last-updated').innerText = "Cập nhật: " + new Date().toLocaleTimeString();
+
+                // Cập nhật biểu đồ (Đảo ngược mảng để vẽ từ trái sang phải)
+                const history = [...data.measurements].reverse();
+                waterChart.data.labels = history.map(d => new Date(d.created_at || Date.now()).toLocaleTimeString());
+                waterChart.data.datasets[0].data = history.map(d => d.sensor_value);
+                waterChart.update('none'); // Update mượt mà
+            }
+
+            // Cập nhật trạng thái Device
+            if (data.device) {
+                const status = data.device.status;
+                const gateBadge = document.getElementById('gate-status');
+                
+                if (status === "USER_LOCKED") {
+                    gateBadge.innerText = "BỊ KHÓA";
+                    gateBadge.className = "badge bg-danger";
+                } else if (status.includes("OPEN")) {
+                    gateBadge.innerText = "ĐANG XẢ";
+                    gateBadge.className = "badge bg-warning text-dark";
+                } else {
+                    gateBadge.innerText = "TỰ ĐỘNG";
+                    gateBadge.className = "badge bg-primary";
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi lấy dữ liệu:", error);
+        }
+    }
+
+    // 3. Hàm gửi lệnh điều khiển
+    async function sendControl(action) {
+        if (!confirm(`Xác nhận thực hiện lệnh: ${action}?`)) return;
+        
+        try {
+            const response = await fetch('/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action })
+            });
+            const result = await response.json();
+            if (result.status === "success") {
+                alert("Đã gửi lệnh thành công!");
+                fetchData(); // Cập nhật giao diện ngay
+            }
+        } catch (error) {
+            alert("Lỗi kết nối Server!");
+        }
+    }
+
+    // Chạy cập nhật tự động mỗi 2 giây
+    setInterval(fetchData, 2000);
+    fetchData(); // Gọi lần đầu
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
